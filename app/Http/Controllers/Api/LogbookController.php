@@ -59,16 +59,6 @@ class LogbookController extends Controller
         return new LogbookResource(true, 'Logbook Berhasil Dihapus', $logbook);
     }
 
-    public function createViaUrl(Request $request)
-{
-    $request->validate([
-        'week_number' => 'required|numeric',
-        'file_pdf' => 'required',
-        'data_pkl_id' => 'required|exists:data_pkl,id'
-    ]);
 
-    $logbook = Logbook::create($request->query());
-    return new LogbookResource(true, 'Logbook berhasil dibuat', $logbook);
-}
 
 }

@@ -7,6 +7,8 @@ use App\Http\Resources\DataPklResource;
 use App\Models\DataPkl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+
 
 class DataPklController extends Controller
 {
@@ -15,9 +17,9 @@ class DataPklController extends Controller
         $data = DataPkl::join('users', 'data_pkl.dosen_pembimbing', '=', 'users.id')
         ->select('data_pkl.*', 'users.name as nama_dosen_pembimbing')
         ->get();
+
         return new DataPklResource(true, 'List Data PKL', $data);
     }
-
     public function show($id)
     {
         $data = DataPkl::join('users', 'data_pkl.dosen_pembimbing', '=', 'users.id')
@@ -28,22 +30,26 @@ class DataPklController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'company_name'     => 'required|string|max:255',
-            'company_address'  => 'required|string',
-            'contact_person'   => 'required|string|max:255',
+        $request->validate([
+            'company_name' => 'required|string|max:255',
+            'company_address' => 'required|string',
+            'contact_person' => 'required|string|max:255',
             'dosen_pembimbing' => 'required|exists:users,id',
-            'status'           => 'required|in:pending,approved,rejected',
-            'users_id'         => 'required|exists:users,id',
+            'status' => 'required|string',
         ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $data = DataPkl::create($request->all());
-        return new DataPklResource(true, 'Data PKL Berhasil Ditambahkan', $data);
+    
+        $data = DataPkl::create([
+            'company_name' => $request->company_name,
+            'company_address' => $request->company_address,
+            'contact_person' => $request->contact_person,
+            'dosen_pembimbing' => $request->dosen_pembimbing,
+            'status' => $request->status,
+            'users_id' => Auth::id(), // otomatis ambil user yang login
+        ]);
+    
+        return new DataPklResource(true, 'Data PKL berhasil ditambahkan', $data);
     }
+    
 
     public function update(Request $request, $id)
     {
@@ -73,20 +79,24 @@ class DataPklController extends Controller
         return new DataPklResource(true, 'Data PKL Berhasil Dihapus', $data);
     }
 
-    public function createViaUrl(Request $request)
-{
-    $request->validate([
-        'company_name' => 'required',
-        'company_address' => 'required',
-        'contact_person' => 'required',
-        'dosen_pembimbing' => 'required|exists:users,id',
-        'status' => 'required',
-        'users_id' => 'required|exists:users,id'
-    ]);
+    public function mahasiswaView()
+    {
+        $user = Auth::user();
+        $data = DataPkl::where('users_id', $user->id)->get();
 
-    $data = DataPkl::create($request->query());
-    return new DataPklResource(true, 'Data PKL berhasil dibuat', $data);
-}
+        return new DataPklResource(true, 'Data PKL Mahasiswa', $data);
+    }
+
+    public function dosenView()
+    {
+        $userId = auth()->id(); 
+    
+        $data = DataPkl::where('dosen_pembimbing', $userId)->with('mahasiswa')->get();
+    
+        return new DataPklResource(true, 'Data PKL untuk Dosen Pembimbing', $data);
+    }
+
+
 
 
 }

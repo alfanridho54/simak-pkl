@@ -7,14 +7,31 @@ use App\Http\Resources\AbsenResource;
 use App\Models\Absen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class AbsenController extends Controller
 {
     public function index()
-    {
-        $absen = Absen::all();
-        return new AbsenResource(true, 'List Data Absen', $absen);
+{
+    $user = Auth::user();
+
+    if ($user->role === 'mahasiswa') {
+        $data = Absen::with('dataPkl.mahasiswa') // eager load
+            ->whereHas('dataPkl', function ($query) use ($user) {
+                $query->where('users_id', $user->id);
+            })->get();
+    } elseif ($user->role === 'dosen') {
+        $data = Absen::with('dataPkl.mahasiswa') // eager load
+            ->whereHas('dataPkl', function ($query) use ($user) {
+                $query->where('dosen_pembimbing', $user->id);
+            })->get();
+    } else {
+        $data = Absen::with('dataPkl.mahasiswa')->get(); // default load all
     }
+
+    return new AbsenResource(true, 'List Data Absen', $data);
+}
+
 
     public function show($id)
     {
@@ -22,20 +39,42 @@ class AbsenController extends Controller
         return new AbsenResource(true, 'Detail Data Absen', $absen);
     }
 
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'location'     => 'required|string',
-            'status'       => 'required|in:hadir,izin,alfa',
-            'date'         => 'required|date',
-            'data_pkl_id'  => 'required|exists:data_pkl,id',
-        ]);
+   public function store(Request $request)
+{
+    $user = Auth::user();
 
-        if ($validator->fails()) return response()->json($validator->errors(), 422);
+    // Cek apakah user punya data_pkl
+    $dataPkl = \App\Models\DataPkl::where('users_id', $user->id)->first();
 
-        $absen = Absen::create($request->all());
-        return new AbsenResource(true, 'Data Absen Berhasil Ditambahkan', $absen);
+    if (!$dataPkl) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Data PKL tidak ditemukan untuk user ini.',
+        ], 404);
     }
+
+    // Validasi
+    $validator = Validator::make($request->all(), [
+        'location' => 'required|string',
+        'status'   => 'required|in:hadir,izin,alfa',
+        'date'     => 'required|date',
+    ]);
+
+    if ($validator->fails()) return response()->json($validator->errors(), 422);
+
+    // Buat data absen
+    $absen = Absen::create([
+        'location'     => $request->location,
+        'status'       => $request->status,
+        'date'         => $request->date,
+        'data_pkl_id'  => $dataPkl->id,
+    ]);
+
+    return new AbsenResource(true, 'Absen berhasil disimpan', $absen);
+}
+
+
+
 
     public function update(Request $request, $id)
     {
