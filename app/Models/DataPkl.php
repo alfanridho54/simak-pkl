@@ -11,7 +11,7 @@ class DataPkl extends Model
 
     protected $table = 'data_pkl';
     protected $fillable = [
-        'company_name', 'company_address', 'contact_person', 'dosen_pembimbing', 'status', 'users_id'
+        'company_name', 'company_address', 'contact_person', 'dosen_pembimbing', 'users_id'
     ];
 
     public function mahasiswa()
@@ -32,5 +32,10 @@ class DataPkl extends Model
     public function logbook()
     {
         return $this->hasMany(Logbook::class, 'data_pkl_id');
+    }
+
+    public function laporan()
+    {
+        return $this->hasMany(LaporanPkl::class, 'data_pkl_id');
     }
 }

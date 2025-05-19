@@ -5,58 +5,86 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KomentarLogbookResource;
 use App\Models\KomentarLogbook;
+use App\Models\Logbook;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class KomentarLogbookController extends Controller
 {
     public function index()
     {
-        $data = KomentarLogbook::all();
-        return new KomentarLogbookResource(true, 'List Komentar Logbook', $data);
-    }
+        $user = Auth::user();
 
-    public function show($id)
-    {
-        $data = KomentarLogbook::findOrFail($id);
-        return new KomentarLogbookResource(true, 'Detail Komentar Logbook', $data);
+        if ($user->role === 'dosen') {
+            // Ambil semua komentar logbook yang dibimbing dosen ini
+            $data = KomentarLogbook::whereHas('logbook.dataPkl', function ($query) use ($user) {
+                $query->where('dosen_pembimbing', $user->id);
+            })->with(['logbook', 'logbook.dataPkl'])->get();
+
+        } elseif ($user->role === 'mahasiswa') {
+            // Ambil komentar logbook milik mahasiswa ini
+            $data = KomentarLogbook::whereHas('logbook.dataPkl', function ($query) use ($user) {
+                $query->where('users_id', $user->id);
+            })->with(['logbook'])->get();
+
+        } else {
+            $data = KomentarLogbook::with(['logbook'])->get();
+        }
+
+        return new KomentarLogbookResource(true, 'List Komentar Logbook', $data);
     }
 
     public function store(Request $request)
     {
+        $user = Auth::user();
+        if ($user->role !== 'dosen') {
+            return response()->json(['success' => false, 'message' => 'Hanya dosen yang dapat memberikan komentar'], 403);
+        }
+
         $validator = Validator::make($request->all(), [
             'logbook_id' => 'required|exists:logbook,id',
-            'dosen_id'   => 'required|exists:users,id',
             'comment'    => 'required|string',
         ]);
 
         if ($validator->fails()) return response()->json($validator->errors(), 422);
 
-        $data = KomentarLogbook::create($request->all());
-        return new KomentarLogbookResource(true, 'Komentar Logbook Berhasil Ditambahkan', $data);
-    }
+        // Cek apakah logbook ini dibimbing oleh dosen yang login
+        $logbook = Logbook::with('dataPkl')->findOrFail($request->logbook_id);
+        if ($logbook->dataPkl->dosen_pembimbing != $user->id) {
+            return response()->json(['success' => false, 'message' => 'Anda bukan pembimbing logbook ini'], 403);
+        }
 
-    public function update(Request $request, $id)
-    {
-        $komentar = KomentarLogbook::findOrFail($id);
-
-        $validator = Validator::make($request->all(), [
-            'logbook_id' => 'sometimes|required|exists:logbook,id',
-            'dosen_id'   => 'sometimes|required|exists:users,id',
-            'comment'    => 'sometimes|required|string',
+        $data = KomentarLogbook::create([
+            'logbook_id' => $request->logbook_id,
+            'dosen_id'   => $user->id,
+            'comment'    => $request->comment,
         ]);
 
-        if ($validator->fails()) return response()->json($validator->errors(), 422);
-
-        $komentar->update($request->all());
-        return new KomentarLogbookResource(true, 'Komentar Logbook Berhasil Diupdate', $komentar);
+        return new KomentarLogbookResource(true, 'Komentar Logbook berhasil ditambahkan', $data);
     }
 
     public function destroy($id)
     {
-        $komentar = KomentarLogbook::findOrFail($id);
+        $user = Auth::user();
+        $komentar = KomentarLogbook::with('logbook.dataPkl')->findOrFail($id);
+
+        // Pastikan hanya dosen pembimbing yang bisa hapus komentar
+        if ($user->role !== 'dosen' || $komentar->dosen_id !== $user->id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
         $komentar->delete();
-        return new KomentarLogbookResource(true, 'Komentar Logbook Berhasil Dihapus', $komentar);
+        return new KomentarLogbookResource(true, 'Komentar Logbook berhasil dihapus', $komentar);
+    }
+
+    public function getByLogbook($logbook_id)
+    {
+        $komentar = KomentarLogbook::where('logbook_id', $logbook_id)
+                    ->with('dosen')
+                    ->get();
+
+        return new KomentarLogbookResource(true, 'Komentar untuk Logbook ID: ' . $logbook_id, $komentar);
     }
 
 }

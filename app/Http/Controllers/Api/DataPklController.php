@@ -43,7 +43,6 @@ class DataPklController extends Controller
             'company_address' => $request->company_address,
             'contact_person' => $request->contact_person,
             'dosen_pembimbing' => $request->dosen_pembimbing,
-            'status' => $request->status,
             'users_id' => Auth::id(), // otomatis ambil user yang login
         ]);
     
@@ -60,7 +59,6 @@ class DataPklController extends Controller
             'company_address'  => 'sometimes|required|string',
             'contact_person'   => 'sometimes|required|string|max:255',
             'dosen_pembimbing' => 'sometimes|required|exists:users,id',
-            'status'           => 'sometimes|required|in:pending,approved,rejected',
             'users_id'         => 'sometimes|required|exists:users,id',
         ]);
 

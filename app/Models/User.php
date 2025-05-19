@@ -22,7 +22,7 @@ class User extends Authenticatable
 
     public function dataPkl()
     {
-        return $this->hasMany(DataPkl::class, 'users_id');
+        return $this->hasOne(DataPkl::class, 'users_id');
     }
 
     public function laporanPkl()

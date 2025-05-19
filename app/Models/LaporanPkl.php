@@ -11,7 +11,7 @@ class LaporanPkl extends Model
     use HasFactory;
     protected $table = 'laporan_pkl';
     protected $fillable = [
-        'report_date', 'file_attachment', 'status', 'users_id'
+        'report_date', 'file_attachment', 'status', 'data_pkl_id','users_id'
     ];
 
     public function mahasiswa()
@@ -23,5 +23,10 @@ class LaporanPkl extends Model
     {
         return $this->hasMany(KomentarLaporan::class, 'laporan_pkl_id');
     }
+
+    public function dataPkl()
+{
+    return $this->belongsTo(DataPkl::class, 'data_pkl_id');
+}
 }
 
