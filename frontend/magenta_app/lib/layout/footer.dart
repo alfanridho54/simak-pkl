@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
 class Footer extends StatelessWidget {
-  const Footer({Key? key}) : super(key: key);
+  const Footer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
       height: 50,
-      color: Colors.grey,
+      color: Colors.grey[200],
       child: const Center(
-        child: Text('Footer'),
+        child: Text('© 2024 SIMAK PKL'),
       ),
     );
   }

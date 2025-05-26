@@ -21,7 +21,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum', 'peran:admin'])->group(function () {
-    Route::get('/user', [UserController::class, 'index']);
+    
     Route::get('/user/{id}', [UserController::class, 'show']);
     Route::post('/user/create', [UserController::class, 'store']);
     Route::put('/user/update/{id}', [UserController::class, 'update']);
@@ -40,7 +40,7 @@ Route::put('/absen/update/{id}', [AbsenController::class, 'update']);
 
 
 
-// Route::middleware(['auth:sanctum'])->get('/data-pkl', [DataPklController::class, 'index']);
+Route::get('/data-pkl', [DataPklController::class, 'index']);
 Route::middleware(['auth:sanctum', 'peran:mahasiswa'])->group(function () {
     Route::get('/data-pkl/mahasiswa', [DataPklController::class, 'mahasiswaView']);
     Route::post('/data-pkl/create', [DataPklController::class, 'store']);
@@ -50,6 +50,7 @@ Route::middleware(['auth:sanctum', 'peran:mahasiswa'])->group(function () {
     Route::post('/logbook/create', [LogbookController::class, 'store']);
     Route::put('/logbook/update/{id}', [LogbookController::class, 'update']);
     Route::delete('/logbook/delete/{id}', [LogbookController::class, 'destroy']);
+
 });
 Route::middleware(['auth:sanctum', 'peran:dosen'])->get('/data-pkl/dosen', [DataPklController::class, 'dosenView']);
 Route::get('/data-pkl/{id}', [DataPklController::class, 'show']);
@@ -65,6 +66,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/laporan-pkl', [LaporanPklController::class, 'index']);
     Route::get('/komentar-logbook/by-logbook/{logbook_id}', [KomentarLogbookController::class, 'getByLogbook']);
     Route::get('/komentar-laporan/by-laporan/{laporan_pkl_id}', [KomentarLaporanController::class, 'getByLaporan']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', function (Request $request) {
+        return $request->user(); 
+    });
 });
 Route::get('/laporan-pkl/{id}', [LaporanPklController::class, 'show']);
 
