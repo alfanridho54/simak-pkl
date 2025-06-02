@@ -44,6 +44,7 @@ Route::get('/data-pkl', [DataPklController::class, 'index']);
 Route::middleware(['auth:sanctum', 'peran:mahasiswa'])->group(function () {
     Route::get('/data-pkl/mahasiswa', [DataPklController::class, 'mahasiswaView']);
     Route::post('/data-pkl/create', [DataPklController::class, 'store']);
+    Route::put('/data-pkl/update/{id}', [DataPklController::class, 'update']);
     Route::post('/laporan-pkl/create', [LaporanPklController::class, 'store']);
     Route::put('/laporan-pkl/update/{id}', [LaporanPklController::class, 'update']);
     Route::delete('/laporan-pkl/delete/{id}', [LaporanPklController::class, 'destroy']);
@@ -54,8 +55,7 @@ Route::middleware(['auth:sanctum', 'peran:mahasiswa'])->group(function () {
 });
 Route::middleware(['auth:sanctum', 'peran:dosen'])->get('/data-pkl/dosen', [DataPklController::class, 'dosenView']);
 Route::get('/data-pkl/{id}', [DataPklController::class, 'show']);
-Route::put('/data-pkl/update/{id}', [DataPklController::class, 'update']);
-Route::delete('/data-pkl/delete/{id}', [DataPklController::class, 'destroy']);
+
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -70,6 +70,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user(); 
     });
+    Route::get('/list-dosen', [UserController::class, 'getDosenList']);
+    Route::delete('/data-pkl/delete/{id}', [DataPklController::class, 'destroy']);
 });
 Route::get('/laporan-pkl/{id}', [LaporanPklController::class, 'show']);
 
@@ -92,5 +94,5 @@ Route::group(['middleware' => ['auth:sanctum', 'peran:admin-dosen']], function (
 });
 
 
-// Route::get('/list-dosen', [UserController::class, 'getListDosen']);
+
 

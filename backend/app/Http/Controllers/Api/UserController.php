@@ -41,6 +41,12 @@ class UserController extends Controller
         return new UserResource(true, 'Data User Berhasil Dihapus', $data);
     }
 
+    public function getDosenList()
+    {
+        $data = User::where('role', 'dosen')->get();
+        return new UserResource(true, 'List Data Dosen', $data);
+    }
+
     
 
 }

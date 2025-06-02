@@ -6,12 +6,16 @@ import 'footer.dart';
 class MainLayout extends StatelessWidget {
   final String title;
   final Widget child;
+  final Widget? floatingActionButton;
+  final FloatingActionButtonLocation? floatingActionButtonLocation;
   final List<Widget>? appBarActions;
 
   const MainLayout({
     Key? key,
     required this.title,
     required this.child,
+    this.floatingActionButton,
+    this.floatingActionButtonLocation,
     this.appBarActions,
   }) : super(key: key);
 
@@ -30,6 +34,8 @@ class MainLayout extends StatelessWidget {
           const Footer(),
         ],
       ),
+      floatingActionButton: floatingActionButton,
+      floatingActionButtonLocation: floatingActionButtonLocation,
     );
   }
 }

@@ -5,6 +5,7 @@ import '../providers/user_data_provider.dart';
 import '../models/user_model.dart';
 import '../screens/home_screen.dart';
 import '../screens/data_pkl/data_pkl.dart';
+import '../screens/absen/absen_screen.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -75,6 +76,17 @@ class CustomDrawer extends StatelessWidget {
                   title: const Text('Data PKL (Tidak tersedia)', style: TextStyle(color: Colors.grey)),
                   onTap: null,
                 ),
+              ListTile(
+                leading: const Icon(Icons.calendar_today_outlined), 
+                title: const Text('Data Absensi'),
+                onTap: () {
+                  Navigator.pop(context);
+                
+                  if (ModalRoute.of(context)?.settings.name != AbsenScreen.routeName) {
+                    Navigator.pushNamed(context, AbsenScreen.routeName);
+                  }
+                },
+              ),
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.logout),

@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
-
 class DataPklController extends Controller
 {
     public function index()
@@ -20,6 +19,7 @@ class DataPklController extends Controller
 
         return new DataPklResource(true, 'List Data PKL', $data);
     }
+
     public function show($id)
     {
         $data = DataPkl::join('users', 'data_pkl.dosen_pembimbing', '=', 'users.id')
@@ -35,7 +35,7 @@ class DataPklController extends Controller
             'company_address' => 'required|string',
             'contact_person' => 'required|string|max:255',
             'dosen_pembimbing' => 'required|exists:users,id',
-            'status' => 'required|string',
+    
         ]);
     
         $data = DataPkl::create([
@@ -43,13 +43,12 @@ class DataPklController extends Controller
             'company_address' => $request->company_address,
             'contact_person' => $request->contact_person,
             'dosen_pembimbing' => $request->dosen_pembimbing,
-            'users_id' => Auth::id(), // otomatis ambil user yang login
+            'users_id' => Auth::id(),
         ]);
     
         return new DataPklResource(true, 'Data PKL berhasil ditambahkan', $data);
     }
     
-
     public function update(Request $request, $id)
     {
         $data = DataPkl::findOrFail($id);
@@ -80,21 +79,32 @@ class DataPklController extends Controller
     public function mahasiswaView()
     {
         $user = Auth::user();
-        $data = DataPkl::where('users_id', $user->id)->get();
+        $data = DataPkl::with(['dosenPembimbing', 'mahasiswa'])
+                       ->where('users_id', $user->id)
+                       ->get();
+
+        $data->transform(function ($item) {
+            $item->nama_dosen_pembimbing = $item->dosenPembimbing ? $item->dosenPembimbing->name : null;
+            $item->nama_mahasiswa = $item->mahasiswa ? $item->mahasiswa->name : null;
+            return $item;
+        });
 
         return new DataPklResource(true, 'Data PKL Mahasiswa', $data);
     }
 
     public function dosenView()
     {
-        $userId = auth()->id(); 
-    
-        $data = DataPkl::where('dosen_pembimbing', $userId)->with('mahasiswa')->get();
-    
+        $user = Auth::user();
+        $data = DataPkl::with(['mahasiswa', 'dosenPembimbing'])
+                       ->where('dosen_pembimbing', $user->id)
+                       ->get();
+
+        $data->transform(function ($item) {
+            $item->nama_dosen_pembimbing = $item->dosenPembimbing ? $item->dosenPembimbing->name : null;
+            $item->nama_mahasiswa = $item->mahasiswa ? $item->mahasiswa->name : null;
+            return $item;
+        });
         return new DataPklResource(true, 'Data PKL untuk Dosen Pembimbing', $data);
     }
-
-
-
-
 }
+
