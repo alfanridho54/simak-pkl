@@ -12,6 +12,9 @@ import 'models/datapkl_model.dart';
 import 'routes/app_routes.dart';
 import 'screens/absen/absen_form_screen.dart';
 import 'models/absen_model.dart';
+import 'screens/logbook/logbook_screen.dart';
+import 'screens/logbook/logbook_form_screen.dart';
+import 'models/logbook_model.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -83,7 +86,14 @@ class MyApp extends StatelessWidget {
           case AbsenFormScreen.routeName:
             final absenItemArg = settings.arguments as Absen?;
             builder = (BuildContext _) => AbsenFormScreen(absenItem: absenItemArg);
-            break;  
+            break;
+          case AppRoutes.logbookList:
+            builder = (BuildContext _) => const LogbookScreen();
+            break;
+          case AppRoutes.logbookForm:
+            final logbookItemArg = settings.arguments as Logbook?;
+            builder = (BuildContext _) => LogbookFormScreen(logbookItem: logbookItemArg);
+            break;
           default:
             builder = (BuildContext _) => const Scaffold(body: Center(child: Text('Halaman tidak ditemukan')));
         }

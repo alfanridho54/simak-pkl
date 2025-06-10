@@ -6,6 +6,8 @@ import '../models/user_model.dart';
 import '../screens/home_screen.dart';
 import '../screens/data_pkl/data_pkl.dart';
 import '../screens/absen/absen_screen.dart';
+import '../screens/logbook/logbook_screen.dart';
+
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -87,6 +89,17 @@ class CustomDrawer extends StatelessWidget {
                   }
                 },
               ),
+              ListTile(
+                leading: const Icon(Icons.book_outlined),
+                title: const Text('Logbook'),
+                onTap: () {
+                  Navigator.pop(context);
+                  if (ModalRoute.of(context)?.settings.name != LogbookScreen.routeName) {
+                    Navigator.pushNamed(context, LogbookScreen.routeName);
+                  }
+                },
+              ),
+              
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.logout),

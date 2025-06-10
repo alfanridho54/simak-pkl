@@ -6,5 +6,6 @@ class AppRoutes {
   static const String dataPklForm = '/data-pkl-form'; 
   static const String absenList = '/absen';
   static const String absenForm = '/absen-form';
-  
+  static const String logbookForm = '/logbook';
+  static const String logbookList = '/logbook-list';
 }

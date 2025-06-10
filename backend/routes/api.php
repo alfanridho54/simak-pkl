@@ -2,97 +2,58 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+
 use App\Http\Controllers\Api\AbsenController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DataPklController;
-use App\Http\Controllers\Api\LaporanPklController;
-use App\Http\Controllers\Api\LogbookController;
 use App\Http\Controllers\Api\KomentarLaporanController;
 use App\Http\Controllers\Api\KomentarLogbookController;
+use App\Http\Controllers\Api\LaporanPklController;
+use App\Http\Controllers\Api\LogbookController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Middleware\Peran;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 
+// Rute Publik
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware(['auth:sanctum', 'peran:admin'])->group(function () {
-    
-    Route::get('/user/{id}', [UserController::class, 'show']);
-    Route::post('/user/create', [UserController::class, 'store']);
-    Route::put('/user/update/{id}', [UserController::class, 'update']);
-    Route::delete('/user/delete/{id}', [UserController::class, 'destroy']);
-    Route::get('/notification/{id}', [NotificationController::class, 'show']);
-    Route::post('/notification/create', [NotificationController::class, 'store']);
-    Route::put('/notification/update/{id}', [NotificationController::class, 'update']);
-    Route::delete('/notification/delete/{id}', [NotificationController::class, 'destroy']);
-});
 
+// Rute Terproteksi
+Route::middleware('auth:sanctum')->group(function () {
 
+    // Auth & User
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', fn(Request $request) => $request->user());
+    Route::get('/users', [UserController::class, 'index'])->name('users.index'); // Untuk list dosen
 
-Route::get('/absen/{id}', [AbsenController::class, 'show']);
-Route::middleware(['auth:sanctum', 'peran:mahasiswa'])->post('/absen/create', [AbsenController::class, 'store']);
-Route::put('/absen/update/{id}', [AbsenController::class, 'update']);
-
-
-
-Route::get('/data-pkl', [DataPklController::class, 'index']);
-Route::middleware(['auth:sanctum', 'peran:mahasiswa'])->group(function () {
+    // Data PKL
     Route::get('/data-pkl/mahasiswa', [DataPklController::class, 'mahasiswaView']);
-    Route::post('/data-pkl/create', [DataPklController::class, 'store']);
-    Route::put('/data-pkl/update/{id}', [DataPklController::class, 'update']);
-    Route::post('/laporan-pkl/create', [LaporanPklController::class, 'store']);
-    Route::put('/laporan-pkl/update/{id}', [LaporanPklController::class, 'update']);
-    Route::delete('/laporan-pkl/delete/{id}', [LaporanPklController::class, 'destroy']);
-    Route::post('/logbook/create', [LogbookController::class, 'store']);
-    Route::put('/logbook/update/{id}', [LogbookController::class, 'update']);
-    Route::delete('/logbook/delete/{id}', [LogbookController::class, 'destroy']);
+    Route::get('/data-pkl/dosen', [DataPklController::class, 'dosenView']);
+    Route::apiResource('data_pkl', DataPklController::class);
 
-});
-Route::middleware(['auth:sanctum', 'peran:dosen'])->get('/data-pkl/dosen', [DataPklController::class, 'dosenView']);
-Route::get('/data-pkl/{id}', [DataPklController::class, 'show']);
+    // Absensi
+    Route::apiResource('absen', AbsenController::class);
 
+    // Logbook
+    Route::post('/logbook/{id}', [LogbookController::class, 'update']);
+    // Rute apiResource untuk CRUD dasar (index, show, store, update, destroy)
+    Route::apiResource('logbook', LogbookController::class);
+    Route::get('/logbook/{id}/pdf', [LogbookController::class, 'exportPDF']);
 
+    // Laporan PKL
+    Route::apiResource('laporan-pkl', LaporanPklController::class);
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/komentar-laporan', [KomentarLaporanController::class, 'index']);
-    Route::get('/komentar-logbook', [KomentarLogbookController::class, 'index']);
-    Route::get('/absen', [AbsenController::class, 'index']);
-    Route::get('/logbook', [LogbookController::class, 'index']);
-    Route::get('/laporan-pkl', [LaporanPklController::class, 'index']);
+    // Komentar (dengan middleware peran)
     Route::get('/komentar-logbook/by-logbook/{logbook_id}', [KomentarLogbookController::class, 'getByLogbook']);
     Route::get('/komentar-laporan/by-laporan/{laporan_pkl_id}', [KomentarLaporanController::class, 'getByLaporan']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', function (Request $request) {
-        return $request->user(); 
+    Route::apiResource('komentar-logbook', KomentarLogbookController::class)->middleware('peran:admin,dosen');
+    Route::apiResource('komentar-laporan', KomentarLaporanController::class)->middleware('peran:admin,dosen');
+
+    // Rute Khusus Admin
+    Route::middleware('peran:admin')->group(function () {
+        Route::apiResource('user-management', UserController::class)->except(['index'])->parameters(['user-management' => 'user']);
+        Route::apiResource('notification', NotificationController::class);
     });
-    Route::get('/list-dosen', [UserController::class, 'getDosenList']);
-    Route::delete('/data-pkl/delete/{id}', [DataPklController::class, 'destroy']);
 });
-Route::get('/laporan-pkl/{id}', [LaporanPklController::class, 'show']);
-
-
-Route::get('/logbook/{id}', [LogbookController::class, 'show']);
-
-
-
-Route::get('/notification', [NotificationController::class, 'index']);
-
-Route::group(['middleware' => ['auth:sanctum', 'peran:admin-dosen']], function () {
-    Route::get('/komentar-laporan/{id}', [KomentarLaporanController::class, 'show']);
-    Route::post('/komentar-laporan/create', [KomentarLaporanController::class, 'store']);
-    Route::put('/komentar-laporan/update/{id}', [KomentarLaporanController::class, 'update']);
-    Route::delete('/komentar-laporan/delete/{id}', [KomentarLaporanController::class, 'destroy']);
-    Route::get('/komentar-logbook/{id}', [KomentarLogbookController::class, 'show']);
-    Route::post('/komentar-logbook/create', [KomentarLogbookController::class, 'store']);
-    Route::put('/komentar-logbook/update/{id}', [KomentarLogbookController::class, 'update']);
-    Route::delete('/komentar-logbook/delete/{id}', [KomentarLogbookController::class, 'destroy']);
-});
-
-
-
-

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 26, 2025 at 03:41 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Waktu pembuatan: 10 Jun 2025 pada 03.17
+-- Versi server: 10.4.32-MariaDB
+-- Versi PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `absen`
+-- Struktur dari tabel `absen`
 --
 
 CREATE TABLE `absen` (
@@ -38,7 +38,7 @@ CREATE TABLE `absen` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `absen`
+-- Dumping data untuk tabel `absen`
 --
 
 INSERT INTO `absen` (`id`, `location`, `status`, `date`, `data_pkl_id`, `created_at`, `updated_at`) VALUES
@@ -50,12 +50,14 @@ INSERT INTO `absen` (`id`, `location`, `status`, `date`, `data_pkl_id`, `created
 (6, 'Kantor Pusat', 'izin', '2025-05-05', 6, '2025-05-08 16:58:06', '2025-05-08 16:58:06'),
 (7, 'Kantor Pusat', 'izin', '2025-05-05', 7, '2025-05-08 17:11:31', '2025-05-08 17:11:31'),
 (8, 'Kantor Pusat', 'izin', '2025-05-07', 7, '2025-05-08 17:57:40', '2025-05-08 17:57:40'),
-(9, 'Kantor Pusat', 'hadir', '2025-05-08', 7, '2025-05-08 18:31:32', '2025-05-08 18:31:32');
+(9, 'Kantor Pusat', 'hadir', '2025-05-08', 7, '2025-05-08 18:31:32', '2025-05-08 18:31:32'),
+(10, 'PT Abcd', 'izin', '2025-06-02', 10, '2025-06-01 17:48:14', '2025-06-01 17:50:25'),
+(11, 'Kantor Pusat', 'izin', '2025-06-04', 10, '2025-06-03 23:37:20', '2025-06-03 23:37:26');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `data_pkl`
+-- Struktur dari tabel `data_pkl`
 --
 
 CREATE TABLE `data_pkl` (
@@ -70,7 +72,7 @@ CREATE TABLE `data_pkl` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `data_pkl`
+-- Dumping data untuk tabel `data_pkl`
 --
 
 INSERT INTO `data_pkl` (`id`, `company_name`, `company_address`, `contact_person`, `dosen_pembimbing`, `users_id`, `created_at`, `updated_at`) VALUES
@@ -81,12 +83,13 @@ INSERT INTO `data_pkl` (`id`, `company_name`, `company_address`, `contact_person
 (5, 'PT Hebat', 'Jl. Merdeka 10', 'Pak Rudi', 7, 1, '2025-05-05 03:45:43', '2025-05-05 03:45:43'),
 (6, 'PT Hebat', 'Jl. Merdeka 10', 'Pak Rudi', 7, 6, '2025-05-07 19:56:23', '2025-05-07 19:56:23'),
 (7, 'PT Sejahtera', 'Jl. Boan', 'Pak Rusdi', 9, 10, '2025-05-08 17:10:32', '2025-05-08 17:10:32'),
-(8, 'PT Sejahtera', 'Jl. Boan RT 05', 'Pak Rusdi', 7, 11, '2025-05-13 17:07:14', '2025-05-13 17:07:14');
+(8, 'PT Sejahtera', 'Jl. Boan RT 05', 'Pak Rusdi', 7, 11, '2025-05-13 17:07:14', '2025-05-13 17:07:14'),
+(10, 'PT. ABCD', 'JL. ABCD', 'Pak Bambang', 7, 12, '2025-06-01 17:30:22', '2025-06-03 23:37:00');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `komentar_laporan`
+-- Struktur dari tabel `komentar_laporan`
 --
 
 CREATE TABLE `komentar_laporan` (
@@ -99,7 +102,7 @@ CREATE TABLE `komentar_laporan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `komentar_laporan`
+-- Dumping data untuk tabel `komentar_laporan`
 --
 
 INSERT INTO `komentar_laporan` (`id`, `laporan_pkl_id`, `dosen_id`, `comment`, `created_at`, `updated_at`) VALUES
@@ -114,7 +117,7 @@ INSERT INTO `komentar_laporan` (`id`, `laporan_pkl_id`, `dosen_id`, `comment`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `komentar_logbook`
+-- Struktur dari tabel `komentar_logbook`
 --
 
 CREATE TABLE `komentar_logbook` (
@@ -127,7 +130,7 @@ CREATE TABLE `komentar_logbook` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `komentar_logbook`
+-- Dumping data untuk tabel `komentar_logbook`
 --
 
 INSERT INTO `komentar_logbook` (`id`, `logbook_id`, `dosen_id`, `comment`, `created_at`, `updated_at`) VALUES
@@ -141,7 +144,7 @@ INSERT INTO `komentar_logbook` (`id`, `logbook_id`, `dosen_id`, `comment`, `crea
 -- --------------------------------------------------------
 
 --
--- Table structure for table `laporan_pkl`
+-- Struktur dari tabel `laporan_pkl`
 --
 
 CREATE TABLE `laporan_pkl` (
@@ -156,7 +159,7 @@ CREATE TABLE `laporan_pkl` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `laporan_pkl`
+-- Dumping data untuk tabel `laporan_pkl`
 --
 
 INSERT INTO `laporan_pkl` (`id`, `data_pkl_id`, `users_id`, `report_date`, `file_attachment`, `status`, `created_at`, `updated_at`) VALUES
@@ -170,12 +173,13 @@ INSERT INTO `laporan_pkl` (`id`, `data_pkl_id`, `users_id`, `report_date`, `file
 -- --------------------------------------------------------
 
 --
--- Table structure for table `logbook`
+-- Struktur dari tabel `logbook`
 --
 
 CREATE TABLE `logbook` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `week_number` int(11) NOT NULL,
+  `kegiatan` text DEFAULT NULL,
   `file_pdf` varchar(255) NOT NULL,
   `data_pkl_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -183,20 +187,23 @@ CREATE TABLE `logbook` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `logbook`
+-- Dumping data untuk tabel `logbook`
 --
 
-INSERT INTO `logbook` (`id`, `week_number`, `file_pdf`, `data_pkl_id`, `created_at`, `updated_at`) VALUES
-(1, 1, 'logbook1.pdf', 1, '2025-04-30 02:44:35', '2025-04-30 02:44:35'),
-(2, 2, 'logbook2.pdf', 1, '2025-04-30 02:44:35', '2025-04-30 02:44:35'),
-(3, 3, 'logbook3.pdf', 1, '2025-04-30 02:44:35', '2025-04-30 02:44:35'),
-(4, 4, 'logbook4.pdf', 1, '2025-05-04 18:01:16', '2025-05-04 18:02:41'),
-(5, 6, 'logbook5.pdf', 6, '2025-05-17 17:52:49', '2025-05-17 17:55:17');
+INSERT INTO `logbook` (`id`, `week_number`, `kegiatan`, `file_pdf`, `data_pkl_id`, `created_at`, `updated_at`) VALUES
+(1, 1, NULL, 'logbook1.pdf', 1, '2025-04-30 02:44:35', '2025-04-30 02:44:35'),
+(2, 2, NULL, 'logbook2.pdf', 1, '2025-04-30 02:44:35', '2025-04-30 02:44:35'),
+(3, 3, NULL, 'logbook3.pdf', 1, '2025-04-30 02:44:35', '2025-04-30 02:44:35'),
+(4, 4, NULL, 'logbook4.pdf', 1, '2025-05-04 18:01:16', '2025-05-04 18:02:41'),
+(5, 6, NULL, 'logbook5.pdf', 6, '2025-05-17 17:52:49', '2025-05-17 17:55:17'),
+(9, 1, NULL, 'generated_on_request', 6, '2025-06-09 17:12:54', '2025-06-09 17:12:54'),
+(10, 2, NULL, 'generated_on_request', 6, '2025-06-09 17:45:53', '2025-06-09 17:45:53'),
+(11, 3, '1233', 'generated_on_request', 6, '2025-06-09 17:57:23', '2025-06-09 18:15:36');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `migrations`
+-- Struktur dari tabel `migrations`
 --
 
 CREATE TABLE `migrations` (
@@ -206,7 +213,7 @@ CREATE TABLE `migrations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `migrations`
+-- Dumping data untuk tabel `migrations`
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
@@ -227,7 +234,7 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `notification`
+-- Struktur dari tabel `notification`
 --
 
 CREATE TABLE `notification` (
@@ -240,7 +247,7 @@ CREATE TABLE `notification` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `notification`
+-- Dumping data untuk tabel `notification`
 --
 
 INSERT INTO `notification` (`id`, `message`, `status`, `users_id`, `created_at`, `updated_at`) VALUES
@@ -252,7 +259,7 @@ INSERT INTO `notification` (`id`, `message`, `status`, `users_id`, `created_at`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `personal_access_tokens`
+-- Struktur dari tabel `personal_access_tokens`
 --
 
 CREATE TABLE `personal_access_tokens` (
@@ -269,34 +276,27 @@ CREATE TABLE `personal_access_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `personal_access_tokens`
+-- Dumping data untuk tabel `personal_access_tokens`
 --
 
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
 (7, 'App\\Models\\User', 8, 'auth_token', '3e7565f7040697585a7995dfd8ed99a06275a3d0865391105d7836ee6cb31527', '[\"*\"]', NULL, NULL, '2025-05-07 20:13:35', '2025-05-07 20:13:35'),
 (8, 'App\\Models\\User', 8, 'auth_token', '8bd38fe255912ae2c7b231866bbb1ecdbdb48fbb4dd24e175b7ba9126aa7b181', '[\"*\"]', '2025-05-07 20:14:28', NULL, '2025-05-07 20:14:19', '2025-05-07 20:14:28'),
 (9, 'App\\Models\\User', 8, 'auth_token', '656ee2ea3e24e23149d8136c17e87c8f6065095928c5b33919c1f0249c485b96', '[\"*\"]', NULL, NULL, '2025-05-07 20:17:19', '2025-05-07 20:17:19'),
-(18, 'App\\Models\\User', 9, 'auth_token', 'ff77f77cb6f0b5f1b20c33dac276a11d36abd486a35e1c4500ead563df04857d', '[\"*\"]', NULL, NULL, '2025-05-08 17:03:32', '2025-05-08 17:03:32'),
-(19, 'App\\Models\\User', 9, 'auth_token', 'f2cd0d09bed79746a84ddfb3110f9670837f4af7dd83842d13d0dd965260bbfd', '[\"*\"]', NULL, NULL, '2025-05-08 17:03:42', '2025-05-08 17:03:42'),
-(20, 'App\\Models\\User', 9, 'auth_token', 'e912dcb1151c984b4a7bc0ed3acdd27736e55172193de1da5d2da562d513ab11', '[\"*\"]', '2025-05-08 17:04:30', NULL, '2025-05-08 17:04:13', '2025-05-08 17:04:30'),
-(23, 'App\\Models\\User', 9, 'auth_token', 'a09d4d764855020a8afeaf2ce8d72263f38b18a242fa24e7630898182f3091c4', '[\"*\"]', '2025-05-08 18:31:39', NULL, '2025-05-08 17:12:20', '2025-05-08 18:31:39'),
-(26, 'App\\Models\\User', 9, 'auth_token', '61f4a0c747f6bbd5eb7c22a3a2306f810244132f46a58cc6e587518bee1189c8', '[\"*\"]', '2025-05-08 18:33:09', NULL, '2025-05-08 18:32:24', '2025-05-08 18:33:09'),
 (37, 'App\\Models\\User', 11, 'auth_token', '332421373394725f295e8c41e3b4b930e1179a3a10f5422701ce625e231250cd', '[\"*\"]', NULL, NULL, '2025-05-13 17:06:02', '2025-05-13 17:06:02'),
 (38, 'App\\Models\\User', 11, 'auth_token', 'aea4b9ced7265ebb6fbc570689ce3aa5fd0edc6e1ede96c2ec8d0c108d7260d6', '[\"*\"]', '2025-05-17 02:08:35', NULL, '2025-05-13 17:06:22', '2025-05-17 02:08:35'),
-(42, 'App\\Models\\User', 9, 'auth_token', '7fce8803403442aabd9812bc493bb3f5943e7967314609c684983b372df1f001', '[\"*\"]', '2025-05-17 17:05:19', NULL, '2025-05-17 17:05:08', '2025-05-17 17:05:19'),
-(44, 'App\\Models\\User', 9, 'auth_token', '7c008939e8f21ef3263fa0af9499dd4c8e6511ae0c5807d279ba120c1d096073', '[\"*\"]', '2025-05-17 17:07:46', NULL, '2025-05-17 17:07:06', '2025-05-17 17:07:46'),
 (47, 'App\\Models\\User', 11, 'auth_token', '4e6fccdb6e8c4faab67262a172ec0607b510dc0f08a4fa96cee40693a475101a', '[\"*\"]', '2025-05-17 17:12:43', NULL, '2025-05-17 17:12:35', '2025-05-17 17:12:43'),
 (49, 'App\\Models\\User', 11, 'auth_token', 'f4746c886576a432683a4a2381efae8ad59d376993748fe4536a2e4a9bb4755b', '[\"*\"]', '2025-05-17 17:15:47', NULL, '2025-05-17 17:14:40', '2025-05-17 17:15:47'),
 (51, 'App\\Models\\User', 11, 'auth_token', '140b766f20adae9c8355ecfcd6658a35f7149c3fa1dcfcdca8a82a06edf2744f', '[\"*\"]', NULL, NULL, '2025-05-17 17:17:00', '2025-05-17 17:17:00'),
 (52, 'App\\Models\\User', 11, 'auth_token', '4bbef33f705cab625d736d8f7424232f66b9c43378c5d08975173d87faa18ced', '[\"*\"]', '2025-05-17 17:34:14', NULL, '2025-05-17 17:18:56', '2025-05-17 17:34:14'),
-(53, 'App\\Models\\User', 9, 'auth_token', '24b2630cc787ea9ba29c98e8835a5c217791e324d453d66f5705c296b5bc77b1', '[\"*\"]', '2025-05-17 17:34:07', NULL, '2025-05-17 17:24:23', '2025-05-17 17:34:07'),
 (62, 'App\\Models\\User', 11, 'auth_token', 'a68eedf7ff8da7ec128c0c78121893681b9c2a70584655987945e960e24ababa', '[\"*\"]', '2025-05-18 02:28:09', NULL, '2025-05-18 02:24:57', '2025-05-18 02:28:09'),
-(63, 'App\\Models\\User', 11, 'auth_token', 'ad5c8c2ff9c2c43cf6292c4692b97d3a314a8ab97de81b1309ab96de791bc281', '[\"*\"]', '2025-05-19 01:07:26', NULL, '2025-05-19 01:07:07', '2025-05-19 01:07:26');
+(63, 'App\\Models\\User', 11, 'auth_token', 'ad5c8c2ff9c2c43cf6292c4692b97d3a314a8ab97de81b1309ab96de791bc281', '[\"*\"]', '2025-05-19 01:07:26', NULL, '2025-05-19 01:07:07', '2025-05-19 01:07:26'),
+(96, 'App\\Models\\User', 6, 'auth_token', 'e2b2f2fa64279c87ee29c6afa188e77d9846a8cbc37a955bfdbdac668eb7a24c', '[\"*\"]', '2025-06-09 18:15:44', NULL, '2025-06-08 16:49:19', '2025-06-09 18:15:44');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Struktur dari tabel `users`
 --
 
 CREATE TABLE `users` (
@@ -312,7 +312,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `users`
+-- Dumping data untuk tabel `users`
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
@@ -326,21 +326,22 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `ro
 (8, 'admin1', 'admin1@gmail.com', NULL, '$2y$12$Z0TpDcFCDhXFIqmcdyH2COgIVMoKwD0tVCxBD2hiTIdc7tDWBVUrG', 'admin', NULL, '2025-05-07 20:13:35', '2025-05-07 20:13:35'),
 (9, 'dosen2', 'dosen2@gmail.com', NULL, '$2y$12$ysOMSJCEya9qRO.5vN7OpOOmm1xF0HZfnjuQwc8nctKmx768sLIF2', 'dosen', NULL, '2025-05-08 17:03:32', '2025-05-08 17:03:32'),
 (10, 'mahasiswa2', 'akun2@gmail.com', NULL, '$2y$12$eikEi6Esfk7fJnGt4lEyJeIOjd3FfcpPH6q4hrGAqvXRnlXhGFbzW', 'mahasiswa', NULL, '2025-05-08 17:05:04', '2025-05-08 17:05:04'),
-(11, 'mahasiswa3', 'akun3@gmail.com', NULL, '$2y$12$P0EJz6uqSdd/DUtKMTFonuHTWi6r4nLjBDULT8WjsLzjHVnK6OTDS', 'mahasiswa', NULL, '2025-05-13 17:06:02', '2025-05-13 17:06:02');
+(11, 'mahasiswa3', 'akun3@gmail.com', NULL, '$2y$12$P0EJz6uqSdd/DUtKMTFonuHTWi6r4nLjBDULT8WjsLzjHVnK6OTDS', 'mahasiswa', NULL, '2025-05-13 17:06:02', '2025-05-13 17:06:02'),
+(12, 'Muhammad Alfan Ridho', 'akun4@gmail.com', NULL, '$2y$12$lGrAJMtuHvzibINCx50TwOPZCA87lCBUMMeHbxV.K7yAP/CAQQXaG', 'mahasiswa', NULL, '2025-06-01 16:46:42', '2025-06-01 16:46:42');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `absen`
+-- Indeks untuk tabel `absen`
 --
 ALTER TABLE `absen`
   ADD PRIMARY KEY (`id`),
   ADD KEY `data_pkl_id` (`data_pkl_id`);
 
 --
--- Indexes for table `data_pkl`
+-- Indeks untuk tabel `data_pkl`
 --
 ALTER TABLE `data_pkl`
   ADD PRIMARY KEY (`id`),
@@ -348,7 +349,7 @@ ALTER TABLE `data_pkl`
   ADD KEY `data_pkl_users_id_foreign` (`users_id`);
 
 --
--- Indexes for table `komentar_laporan`
+-- Indeks untuk tabel `komentar_laporan`
 --
 ALTER TABLE `komentar_laporan`
   ADD PRIMARY KEY (`id`),
@@ -356,7 +357,7 @@ ALTER TABLE `komentar_laporan`
   ADD KEY `komentar_laporan_dosen_id_foreign` (`dosen_id`);
 
 --
--- Indexes for table `komentar_logbook`
+-- Indeks untuk tabel `komentar_logbook`
 --
 ALTER TABLE `komentar_logbook`
   ADD PRIMARY KEY (`id`),
@@ -364,7 +365,7 @@ ALTER TABLE `komentar_logbook`
   ADD KEY `komentar_logbook_dosen_id_foreign` (`dosen_id`);
 
 --
--- Indexes for table `laporan_pkl`
+-- Indeks untuk tabel `laporan_pkl`
 --
 ALTER TABLE `laporan_pkl`
   ADD PRIMARY KEY (`id`),
@@ -372,27 +373,27 @@ ALTER TABLE `laporan_pkl`
   ADD KEY `laporan_pkl_users_id_foreign` (`users_id`);
 
 --
--- Indexes for table `logbook`
+-- Indeks untuk tabel `logbook`
 --
 ALTER TABLE `logbook`
   ADD PRIMARY KEY (`id`),
   ADD KEY `logbook_data_pkl_id_foreign` (`data_pkl_id`);
 
 --
--- Indexes for table `migrations`
+-- Indeks untuk tabel `migrations`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `notification`
+-- Indeks untuk tabel `notification`
 --
 ALTER TABLE `notification`
   ADD PRIMARY KEY (`id`),
   ADD KEY `notification_users_id_foreign` (`users_id`);
 
 --
--- Indexes for table `personal_access_tokens`
+-- Indeks untuk tabel `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
   ADD PRIMARY KEY (`id`),
@@ -400,122 +401,122 @@ ALTER TABLE `personal_access_tokens`
   ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
--- Indexes for table `users`
+-- Indeks untuk tabel `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `users_email_unique` (`email`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `absen`
+-- AUTO_INCREMENT untuk tabel `absen`
 --
 ALTER TABLE `absen`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT for table `data_pkl`
+-- AUTO_INCREMENT untuk tabel `data_pkl`
 --
 ALTER TABLE `data_pkl`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `komentar_laporan`
+-- AUTO_INCREMENT untuk tabel `komentar_laporan`
 --
 ALTER TABLE `komentar_laporan`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `komentar_logbook`
+-- AUTO_INCREMENT untuk tabel `komentar_logbook`
 --
 ALTER TABLE `komentar_logbook`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `laporan_pkl`
+-- AUTO_INCREMENT untuk tabel `laporan_pkl`
 --
 ALTER TABLE `laporan_pkl`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT for table `logbook`
+-- AUTO_INCREMENT untuk tabel `logbook`
 --
 ALTER TABLE `logbook`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT for table `migrations`
+-- AUTO_INCREMENT untuk tabel `migrations`
 --
 ALTER TABLE `migrations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT for table `notification`
+-- AUTO_INCREMENT untuk tabel `notification`
 --
 ALTER TABLE `notification`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `personal_access_tokens`
+-- AUTO_INCREMENT untuk tabel `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- Constraints for dumped tables
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
 --
--- Constraints for table `absen`
+-- Ketidakleluasaan untuk tabel `absen`
 --
 ALTER TABLE `absen`
   ADD CONSTRAINT `absen_ibfk_1` FOREIGN KEY (`data_pkl_id`) REFERENCES `data_pkl` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `data_pkl`
+-- Ketidakleluasaan untuk tabel `data_pkl`
 --
 ALTER TABLE `data_pkl`
   ADD CONSTRAINT `data_pkl_dosen_pembimbing_foreign` FOREIGN KEY (`dosen_pembimbing`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `data_pkl_users_id_foreign` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`);
 
 --
--- Constraints for table `komentar_laporan`
+-- Ketidakleluasaan untuk tabel `komentar_laporan`
 --
 ALTER TABLE `komentar_laporan`
   ADD CONSTRAINT `komentar_laporan_dosen_id_foreign` FOREIGN KEY (`dosen_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `komentar_laporan_laporan_pkl_id_foreign` FOREIGN KEY (`laporan_pkl_id`) REFERENCES `laporan_pkl` (`id`);
 
 --
--- Constraints for table `komentar_logbook`
+-- Ketidakleluasaan untuk tabel `komentar_logbook`
 --
 ALTER TABLE `komentar_logbook`
   ADD CONSTRAINT `komentar_logbook_dosen_id_foreign` FOREIGN KEY (`dosen_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `komentar_logbook_logbook_id_foreign` FOREIGN KEY (`logbook_id`) REFERENCES `logbook` (`id`);
 
 --
--- Constraints for table `laporan_pkl`
+-- Ketidakleluasaan untuk tabel `laporan_pkl`
 --
 ALTER TABLE `laporan_pkl`
   ADD CONSTRAINT `laporan_pkl_data_pkl_id_foreign` FOREIGN KEY (`data_pkl_id`) REFERENCES `data_pkl` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `laporan_pkl_users_id_foreign` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `logbook`
+-- Ketidakleluasaan untuk tabel `logbook`
 --
 ALTER TABLE `logbook`
   ADD CONSTRAINT `logbook_data_pkl_id_foreign` FOREIGN KEY (`data_pkl_id`) REFERENCES `data_pkl` (`id`);
 
 --
--- Constraints for table `notification`
+-- Ketidakleluasaan untuk tabel `notification`
 --
 ALTER TABLE `notification`
   ADD CONSTRAINT `notification_users_id_foreign` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`);
