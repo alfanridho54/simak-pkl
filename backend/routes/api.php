@@ -48,8 +48,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Komentar (dengan middleware peran)
     Route::get('/komentar-logbook/by-logbook/{logbook_id}', [KomentarLogbookController::class, 'getByLogbook']);
     Route::get('/komentar-laporan/by-laporan/{laporan_pkl_id}', [KomentarLaporanController::class, 'getByLaporan']);
-    Route::apiResource('komentar-logbook', KomentarLogbookController::class)->middleware('peran:admin,dosen');
-    Route::apiResource('komentar-laporan', KomentarLaporanController::class)->middleware('peran:admin,dosen');
+    Route::apiResource('komentar-logbook', KomentarLogbookController::class)->middleware('peran:admin-dosen');
+    Route::apiResource('komentar-laporan', KomentarLaporanController::class)->middleware('peran:admin-dosen');
 
     // Rute Khusus Admin
     Route::middleware('peran:admin')->group(function () {

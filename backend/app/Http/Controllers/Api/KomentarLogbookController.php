@@ -17,13 +17,13 @@ class KomentarLogbookController extends Controller
         $user = Auth::user();
 
         if ($user->role === 'dosen') {
-            // Ambil semua komentar logbook yang dibimbing dosen ini
+            // Ambil semua komentar logbook yang dibimbing dosen
             $data = KomentarLogbook::whereHas('logbook.dataPkl', function ($query) use ($user) {
                 $query->where('dosen_pembimbing', $user->id);
             })->with(['logbook', 'logbook.dataPkl'])->get();
 
         } elseif ($user->role === 'mahasiswa') {
-            // Ambil komentar logbook milik mahasiswa ini
+            // Ambil komentar logbook milik mahasiswa
             $data = KomentarLogbook::whereHas('logbook.dataPkl', function ($query) use ($user) {
                 $query->where('users_id', $user->id);
             })->with(['logbook'])->get();
@@ -69,7 +69,7 @@ class KomentarLogbookController extends Controller
         $user = Auth::user();
         $komentar = KomentarLogbook::with('logbook.dataPkl')->findOrFail($id);
 
-        // Pastikan hanya dosen pembimbing yang bisa hapus komentar
+        // hanya dosen pembimbing yang bisa hapus komentar
         if ($user->role !== 'dosen' || $komentar->dosen_id !== $user->id) {
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }

@@ -15,6 +15,7 @@ import 'models/absen_model.dart';
 import 'screens/logbook/logbook_screen.dart';
 import 'screens/logbook/logbook_form_screen.dart';
 import 'models/logbook_model.dart';
+import 'screens/logbook/logbook_detail_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -93,6 +94,14 @@ class MyApp extends StatelessWidget {
           case AppRoutes.logbookForm:
             final logbookItemArg = settings.arguments as Logbook?;
             builder = (BuildContext _) => LogbookFormScreen(logbookItem: logbookItemArg);
+            break;
+          case AppRoutes.logbookDetail:
+            final logbookItemArg = settings.arguments as Logbook?;
+            if (logbookItemArg != null) {
+              builder = (BuildContext _) => LogbookDetailScreen(logbook: logbookItemArg);
+            } else {
+              builder = (BuildContext _) => const Scaffold(body: Center(child: Text('Error: Data logbook tidak ditemukan.')));
+            }
             break;
           default:
             builder = (BuildContext _) => const Scaffold(body: Center(child: Text('Halaman tidak ditemukan')));

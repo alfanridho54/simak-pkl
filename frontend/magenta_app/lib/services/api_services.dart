@@ -10,6 +10,7 @@ import '../models/datapkl_model.dart';
 import '../models/logbook_model.dart';
 import '../models/user_model.dart';
 import '../utils/token_manager.dart';
+import '../models/komentar_logbook_model.dart';
 
 class ApiService {
   static const String _baseUrl = 'http://10.0.2.2:8000/api';
@@ -283,6 +284,70 @@ class ApiService {
       return {'success': false, 'message': 'Error: ${e.toString()}'};
     }
   }
+
+  // komentar logbook
+  static Future<List<KomentarLogbook>> getKomentarByLogbook(int logbookId) async {
+        final String? token = await TokenManager.getToken();
+        if (token == null) throw Exception('Autentikasi diperlukan.');
+        
+        final Uri uri = Uri.parse('$_baseUrl/komentar-logbook/by-logbook/$logbookId');
+        
+        try {
+            final response = await http.get(uri, headers: {
+                'Authorization': 'Bearer $token', 'Accept': 'application/json',
+            });
+            
+            if (response.statusCode == 200) {
+                final dynamic body = jsonDecode(response.body);
+                if (body['success'] == true && body['data'] is List) {
+                    return (body['data'] as List)
+                        .map((item) => KomentarLogbook.fromJson(item as Map<String, dynamic>))
+                        .toList();
+                }
+                throw Exception('Format respons komentar tidak valid.');
+            }
+            throw Exception('Gagal memuat komentar. Status: ${response.statusCode}');
+        } catch (e) {
+            rethrow;
+        }
+    }
+
+    static Future<Map<String, dynamic>> createKomentarLogbook(Map<String, String> data) async {
+        final String? token = await TokenManager.getToken();
+        if (token == null) return {'success': false, 'message': 'Autentikasi diperlukan.'};
+        
+        final Uri uri = Uri.parse('$_baseUrl/komentar-logbook');
+        
+        try {
+            final response = await http.post(uri,
+                headers: {
+                    'Authorization': 'Bearer $token',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json; charset=UTF-8',
+                },
+                body: jsonEncode(data));
+            
+            return jsonDecode(response.body);
+        } catch (e) {
+            return {'success': false, 'message': 'Error: ${e.toString()}'};
+        }
+    }
+
+    static Future<Map<String, dynamic>> deleteKomentarLogbook(int komentarId) async {
+        final String? token = await TokenManager.getToken();
+        if (token == null) return {'success': false, 'message': 'Autentikasi diperlukan.'};
+        
+        final Uri uri = Uri.parse('$_baseUrl/komentar-logbook/$komentarId');
+        
+        try {
+            final response = await http.delete(uri,
+                headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
+            
+            return jsonDecode(response.body);
+        } catch (e) {
+            return {'success': false, 'message': 'Error: ${e.toString()}'};
+        }
+    }
 
 
 }
