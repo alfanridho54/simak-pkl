@@ -35,7 +35,7 @@ class _AuthScreenState extends State<AuthScreen>
               height: MediaQuery.of(context).size.height * 0.22,
               width: double.infinity,
               child: Image.asset(
-                'assets/images/auth_banner.png',
+                'lib/assets/images/auth_banner.png',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(

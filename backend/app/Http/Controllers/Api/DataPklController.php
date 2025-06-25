@@ -13,9 +13,7 @@ class DataPklController extends Controller
 {
     public function index()
     {
-        $data = DataPkl::join('users', 'data_pkl.dosen_pembimbing', '=', 'users.id')
-        ->select('data_pkl.*', 'users.name as nama_dosen_pembimbing')
-        ->get();
+        $data = DataPkl::with(['mahasiswa', 'dosenPembimbing'])->latest()->get();
 
         return new DataPklResource(true, 'List Data PKL', $data);
     }
@@ -76,19 +74,12 @@ class DataPklController extends Controller
         return new DataPklResource(true, 'Data PKL Berhasil Dihapus', $data);
     }
 
-    public function mahasiswaView()
+     public function mahasiswaView()
     {
         $user = Auth::user();
-        $data = DataPkl::with(['dosenPembimbing', 'mahasiswa'])
+        $data = DataPkl::with(['mahasiswa', 'dosenPembimbing'])
                        ->where('users_id', $user->id)
                        ->get();
-
-        $data->transform(function ($item) {
-            $item->nama_dosen_pembimbing = $item->dosenPembimbing ? $item->dosenPembimbing->name : null;
-            $item->nama_mahasiswa = $item->mahasiswa ? $item->mahasiswa->name : null;
-            return $item;
-        });
-
         return new DataPklResource(true, 'Data PKL Mahasiswa', $data);
     }
 
@@ -98,12 +89,6 @@ class DataPklController extends Controller
         $data = DataPkl::with(['mahasiswa', 'dosenPembimbing'])
                        ->where('dosen_pembimbing', $user->id)
                        ->get();
-
-        $data->transform(function ($item) {
-            $item->nama_dosen_pembimbing = $item->dosenPembimbing ? $item->dosenPembimbing->name : null;
-            $item->nama_mahasiswa = $item->mahasiswa ? $item->mahasiswa->name : null;
-            return $item;
-        });
         return new DataPklResource(true, 'Data PKL untuk Dosen Pembimbing', $data);
     }
 }

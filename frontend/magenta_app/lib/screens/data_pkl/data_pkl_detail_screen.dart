@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../layout/main_layout.dart';
 import '../../models/datapkl_model.dart';
 
+
 class DataPklDetailScreen extends StatelessWidget {
   static const String routeName = '/data-pkl-detail';
   final DataPkl pklItem;
@@ -9,7 +10,6 @@ class DataPklDetailScreen extends StatelessWidget {
   const DataPklDetailScreen({super.key, required this.pklItem});
 
   Widget _buildDetailRow(String label, String? value) {
-    // ... (fungsi _buildDetailRow tetap sama)
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -37,7 +37,7 @@ class DataPklDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MainLayout(
-      title: pklItem.company_name ?? 'Detail PKL', // Judul dinamis
+      title: pklItem.company_name ?? 'Detail PKL',
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Card(
@@ -67,23 +67,19 @@ class DataPklDetailScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                // Menggunakan helper getter displayNamaMahasiswa
                 _buildDetailRow('Nama Mahasiswa:', pklItem.displayNamaMahasiswa),
-                // Jika API mengirim objek mahasiswa dan ada emailnya
+                _buildDetailRow('NIM / NPM:', pklItem.mahasiswa?.nim),
                 if (pklItem.mahasiswa?.email != null)
                   _buildDetailRow('Email Mahasiswa:', pklItem.mahasiswa!.email),
-
                 const SizedBox(height: 10),
                 const Divider(),
                 const SizedBox(height: 10),
-                 Text(
+                Text(
                   'Informasi Dosen Pembimbing:',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                // Menggunakan helper getter displayNamaDosen
                 _buildDetailRow('Nama Dosen:', pklItem.displayNamaDosen),
-                 // Jika API mengirim objek dosenPembimbing dan ada emailnya
                 if (pklItem.dosenPembimbing?.email != null)
                   _buildDetailRow('Email Dosen:', pklItem.dosenPembimbing!.email),
               ],

@@ -24,43 +24,38 @@ class _DataPKLScreenState extends State<DataPKLScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchDataPkl();
+    _fetchData();
   }
 
-  void _fetchDataPkl() {
+  Future<void> _fetchData() async {
     setState(() {
       _futureDataPkl = ApiService.getDataPkl(role: widget.userRole);
     });
   }
 
-  Future<void> _navigateAndRefresh(BuildContext context, {DataPkl? pklItem}) async {
-    final result = await Navigator.pushNamed(
+  Future<void> _navigateAndRefresh({DataPkl? pklItem}) async {
+    final result = await Navigator.push(
       context,
-      PklFormScreen.routeName,
-      arguments: pklItem,
+      MaterialPageRoute(builder: (context) => PklFormScreen(pklItem: pklItem)),
     );
-
     if (result == true && mounted) {
-      _fetchDataPkl();
+      _fetchData();
     }
   }
 
   void _showDeleteConfirmation(BuildContext context, DataPkl pklItem) {
+    if (pklItem.id == null) return;
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('Konfirmasi Hapus'),
-          content: Text(
-              'Apakah Anda yakin ingin menghapus data PKL untuk "${pklItem.company_name ?? 'N/A'}"?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Batal'),
-              onPressed: () => Navigator.of(dialogContext).pop(),
-            ),
+          content: Text('Hapus data PKL di "${pklItem.company_name ?? 'N/A'}"?'),
+          actions: [
+            TextButton(child: const Text('Batal'), onPressed: () => Navigator.of(dialogContext).pop()),
             TextButton(
               child: const Text('Hapus', style: TextStyle(color: Colors.red)),
-              onPressed: () async {
+              onPressed: () {
                 Navigator.of(dialogContext).pop();
                 _deletePklItem(pklItem.id!);
               },
@@ -74,117 +69,66 @@ class _DataPKLScreenState extends State<DataPKLScreen> {
   Future<void> _deletePklItem(int id) async {
     final result = await ApiService.deleteDataPkl(id);
     if (mounted) {
-      final bool isSuccess = result['success'] as bool? ?? false;
-      final String message = result['message'] as String? ??
-          (isSuccess ? 'Data berhasil dihapus!' : 'Gagal menghapus data.');
+      final isSuccess = result['success'] as bool? ?? false;
+      final message = result['message'] as String? ?? 'Terjadi kesalahan.';
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: isSuccess ? Colors.green : Colors.red,
-        ),
+        SnackBar(content: Text(message), backgroundColor: isSuccess ? Colors.green : Colors.red),
       );
-      if (isSuccess) {
-        _fetchDataPkl();
-      }
+      if (isSuccess) _fetchData();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final String? currentUserRole = Provider.of<UserDataProvider>(context, listen: false).currentUser?.role;
-
-    bool shouldShowFab = (currentUserRole == 'mahasiswa' && widget.userRole == 'mahasiswa');
+    final currentUser = Provider.of<UserDataProvider>(context, listen: false).currentUser;
+    bool isAdminView = currentUser?.role == 'admin';
 
     return MainLayout(
-      title: "Data PKL (${widget.userRole == 'dosen' ? 'Dosen' : 'Mahasiswa'})",
-      floatingActionButton: shouldShowFab
-          ? FloatingActionButton(
-              onPressed: () => _navigateAndRefresh(context),
-              tooltip: 'Tambah Data PKL',
-              child: const Icon(Icons.add),
-            )
+      title: "Data PKL ${isAdminView ? '(Admin View)' : ''}",
+      floatingActionButton: (currentUser?.role == 'mahasiswa' && widget.userRole == 'mahasiswa')
+          ? FloatingActionButton(onPressed: () => _navigateAndRefresh(), tooltip: 'Tambah Data PKL', child: const Icon(Icons.add))
           : null,
       child: RefreshIndicator(
-        onRefresh: () async => _fetchDataPkl(),
+        onRefresh: _fetchData,
         child: FutureBuilder<List<DataPkl>>(
           future: _futureDataPkl,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(
-                  child: Text('Error memuat data PKL: ${snapshot.error}'));
+              return Center(child: Padding(padding: const EdgeInsets.all(16.0), child: Text('Error: ${snapshot.error}', textAlign: TextAlign.center)));
             } else if (snapshot.hasData) {
-              final List<DataPkl> pklDataList = snapshot.data!;
+              final pklDataList = snapshot.data!;
               if (pklDataList.isEmpty) {
-                return const Center(
-                    child: Text('Tidak ada data PKL ditemukan.'));
+                return const Center(child: Text('Tidak ada data PKL ditemukan.'));
               }
               return ListView.builder(
                 itemCount: pklDataList.length,
                 itemBuilder: (context, index) {
-                  final DataPkl pklItem = pklDataList[index];
+                  final pklItem = pklDataList[index];
+                  String subtitleText = "Mahasiswa: ${pklItem.displayNamaMahasiswa}\n"
+                                        "Dospem: ${pklItem.displayNamaDosen}";
+
                   return Card(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 8.0, vertical: 4.0),
+                    margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                     child: ListTile(
                       title: Text(pklItem.company_name ?? 'N/A'),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(pklItem.company_address ?? 'Alamat tidak tersedia'),
-                          if (widget.userRole == 'dosen' && pklItem.displayNamaMahasiswa.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(top:4.0),
-                              child: Text("Mhs: ${pklItem.displayNamaMahasiswa}", style: TextStyle(fontSize: 12, color: Colors.grey[700])),
-                            ),
-                          if (widget.userRole == 'mahasiswa' && pklItem.displayNamaDosen.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(top:4.0),
-                              child: Text("Dospem: ${pklItem.displayNamaDosen}", style: TextStyle(fontSize: 12, color: Colors.grey[700])),
-                            ),
-                        ],
-                      ),
+                      subtitle: Text(subtitleText),
                       trailing: PopupMenuButton<String>(
                         onSelected: (value) {
                           if (value == 'detail') {
-                            Navigator.pushNamed(
-                              context,
-                              DataPklDetailScreen.routeName,
-                              arguments: pklItem,
-                            );
+                            Navigator.pushNamed(context, DataPklDetailScreen.routeName, arguments: pklItem);
                           } else if (value == 'edit') {
-                            if(currentUserRole == 'mahasiswa' && widget.userRole == 'mahasiswa') {
-                              _navigateAndRefresh(context, pklItem: pklItem);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Anda tidak diizinkan mengedit data ini.')),
-                              );
-                            }
+                            _navigateAndRefresh(pklItem: pklItem);
                           } else if (value == 'delete') {
-                            if(currentUserRole == 'mahasiswa' && widget.userRole == 'mahasiswa') {
-                              _showDeleteConfirmation(context, pklItem);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Anda tidak diizinkan menghapus data ini.')),
-                              );
-                            }
+                            _showDeleteConfirmation(context, pklItem);
                           }
                         },
                         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                            value: 'detail',
-                            child: ListTile(leading: Icon(Icons.visibility), title: Text('Lihat Detail')),
-                          ),
-                          if (currentUserRole == 'mahasiswa' && widget.userRole == 'mahasiswa') ...[
-                            const PopupMenuItem<String>(
-                              value: 'edit',
-                              child: ListTile(leading: Icon(Icons.edit), title: Text('Edit')),
-                            ),
-                            const PopupMenuItem<String>(
-                              value: 'delete',
-                              child: ListTile(leading: Icon(Icons.delete, color: Colors.red), title: Text('Hapus', style: TextStyle(color: Colors.red))),
-                            ),
+                          const PopupMenuItem<String>(value: 'detail', child: ListTile(leading: Icon(Icons.visibility), title: Text('Lihat Detail'))),
+                          if (currentUser?.role == 'admin' || (currentUser?.role == 'mahasiswa' && currentUser?.id == pklItem.users_id)) ...[
+                            const PopupMenuItem<String>(value: 'edit', child: ListTile(leading: Icon(Icons.edit), title: Text('Edit'))),
+                            const PopupMenuItem<String>(value: 'delete', child: ListTile(leading: Icon(Icons.delete, color: Colors.red), title: Text('Hapus', style: TextStyle(color: Colors.red)))),
                           ]
                         ],
                       ),
@@ -192,10 +136,8 @@ class _DataPKLScreenState extends State<DataPKLScreen> {
                   );
                 },
               );
-            } else {
-              return const Center(
-                  child: Text('Tidak ada data PKL tersedia.'));
             }
+            return const Center(child: Text('Tidak ada data.'));
           },
         ),
       ),

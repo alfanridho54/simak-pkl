@@ -13,12 +13,19 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasApiTokens;
 
     protected $fillable = [
-        'name', 'email', 'password', 'role'
+        'name','nim', 'email', 'password', 'role','avatar'
     ];
 
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    protected function avatar(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? Storage::disk('public')->url($value) : null,
+        );
+    }
 
     public function dataPkl()
     {

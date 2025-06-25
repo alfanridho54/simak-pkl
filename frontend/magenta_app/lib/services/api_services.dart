@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
-
+import '../models/laporan_pkl_model.dart';
+import '../models/komentar_laporan_model.dart';
+import 'package:path/path.dart' as path;
 
 import '../models/absen_model.dart';
 import '../models/datapkl_model.dart';
@@ -11,22 +13,32 @@ import '../models/logbook_model.dart';
 import '../models/user_model.dart';
 import '../utils/token_manager.dart';
 import '../models/komentar_logbook_model.dart';
+import '../models/dashboard_model.dart';
 
 class ApiService {
   static const String _baseUrl = 'http://10.0.2.2:8000/api';
 
  // Data PKL
-  static Future<List<DataPkl>> getDataPkl({required String role}) async {
+   static Future<List<DataPkl>> getDataPkl({required String role}) async {
     final String? token = await TokenManager.getToken();
     if (token == null) throw Exception('Autentikasi diperlukan.');
-    if (role != 'dosen' && role != 'mahasiswa') {
+
+    Uri uri;
+    if (role == 'admin') {
+      uri = Uri.parse('$_baseUrl/data_pkl');
+    } else if (role == 'dosen' || role == 'mahasiswa') {
+      uri = Uri.parse('$_baseUrl/data-pkl/$role');
+    } else {
       throw Exception('Role tidak valid untuk mengambil data PKL.');
     }
-    final Uri uri = Uri.parse('$_baseUrl/data-pkl/$role');
+    
+    print('[ApiService.getDataPkl] Fetching data for role "$role" from: $uri');
+
     final response = await http.get(uri, headers: {
       'Authorization': 'Bearer $token',
       'Accept': 'application/json'
     });
+
     if (response.statusCode == 200) {
       final dynamic body = jsonDecode(response.body);
       if (body['success'] == true && body['data'] is List) {
@@ -36,9 +48,9 @@ class ApiService {
       }
       throw Exception('Format respons data PKL tidak valid.');
     }
-    throw Exception(
-        'Gagal memuat data PKL. Status: ${response.statusCode}');
+    throw Exception('Gagal memuat data PKL. Status: ${response.statusCode}');
   }
+
 
   static Future<Map<String, dynamic>> createDataPkl(
       Map<String, dynamic> pklData) async {
@@ -348,6 +360,204 @@ class ApiService {
             return {'success': false, 'message': 'Error: ${e.toString()}'};
         }
     }
+
+     // --- CRUD LAPORAN PKL ---
+  static Future<List<LaporanPkl>> getLaporanPkl() async {
+    final token = await TokenManager.getToken();
+    if (token == null) throw Exception('Autentikasi diperlukan.');
+    final response = await http.get(Uri.parse('$_baseUrl/laporan-pkl'),
+        headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      if (body['success'] == true && body['data'] is List) {
+        return (body['data'] as List).map((item) => LaporanPkl.fromJson(item)).toList();
+      }
+    }
+    throw Exception('Gagal memuat Laporan PKL');
+  }
+
+  static Future<Map<String, dynamic>> createLaporanPkl(Map<String, String> data, File file) async {
+    final token = await TokenManager.getToken();
+    if (token == null) return {'success': false, 'message': 'Autentikasi diperlukan.'};
+    var request = http.MultipartRequest('POST', Uri.parse('$_baseUrl/laporan-pkl'));
+    request.headers['Authorization'] = 'Bearer $token';
+    request.headers['Accept'] = 'application/json';
+    request.fields.addAll(data);
+    request.files.add(await http.MultipartFile.fromPath('file_attachment', file.path, filename: path.basename(file.path)));
+    var res = await request.send();
+    return jsonDecode(await res.stream.bytesToString());
+  }
+
+  static Future<Map<String, dynamic>> deleteLaporanPkl(int id) async {
+    final token = await TokenManager.getToken();
+    if (token == null) return {'success': false, 'message': 'Autentikasi diperlukan.'};
+    final response = await http.delete(Uri.parse('$_baseUrl/laporan-pkl/$id'),
+        headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
+    return jsonDecode(response.body);
+  }
+
+  // --- CRUD KOMENTAR LAPORAN ---
+  static Future<List<KomentarLaporan>> getKomentarByLaporan(int laporanId) async {
+    final token = await TokenManager.getToken();
+    if (token == null) throw Exception('Autentikasi diperlukan.');
+    final response = await http.get(Uri.parse('$_baseUrl/komentar-laporan/by-laporan/$laporanId'),
+        headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      if (body['success'] == true && body['data'] is List) {
+        return (body['data'] as List).map((item) => KomentarLaporan.fromJson(item)).toList();
+      }
+    }
+    throw Exception('Gagal memuat Komentar Laporan');
+  }
+
+  static Future<Map<String, dynamic>> createKomentarLaporan(Map<String, String> data) async {
+    final token = await TokenManager.getToken();
+    if (token == null) return {'success': false, 'message': 'Autentikasi diperlukan.'};
+    final response = await http.post(Uri.parse('$_baseUrl/komentar-laporan'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(data));
+    return jsonDecode(response.body);
+  }
+
+  static Future<Map<String, dynamic>> deleteKomentarLaporan(int id) async {
+    final token = await TokenManager.getToken();
+    if (token == null) return {'success': false, 'message': 'Autentikasi diperlukan.'};
+    final response = await http.delete(Uri.parse('$_baseUrl/komentar-laporan/$id'),
+        headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
+    return jsonDecode(response.body);
+  }
+
+  // --- DOWNLOAD FILE LAPORAN ---
+ static Future<String?> downloadLaporanPkl(String fileUrl, String fileName) async {
+    final String? token = await TokenManager.getToken();
+    if (token == null) throw Exception('Autentikasi diperlukan.');
+
+    final Directory dir = await getTemporaryDirectory();
+    final String filePath = "${dir.path}/$fileName";
+    
+    final dio = Dio();
+    try {
+      print("[ApiService] Downloading attachment to TEMPORARY CACHE: $filePath");
+      await dio.download(
+        fileUrl,
+        filePath,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+          responseType: ResponseType.bytes,
+        ),
+      );
+      return filePath;
+    } on DioException catch (e) {
+      print("Dio download error: ${e.response?.data ?? e.message}");
+      throw Exception("Gagal mengunduh file lampiran.");
+    }
+  }
+
+  // DASHBOARD
+  static Future<DashboardData> getDashboardData() async {
+        final String? token = await TokenManager.getToken();
+        if (token == null) throw Exception('Autentikasi diperlukan.');
+        
+        final Uri uri = Uri.parse('$_baseUrl/dashboard');
+        try {
+            final response = await http.get(uri, headers: {
+                'Authorization': 'Bearer $token',
+                'Accept': 'application/json',
+            });
+
+            if (response.statusCode == 200) {
+                final body = jsonDecode(response.body);
+                if (body['success'] == true && body['data'] != null) {
+                    return DashboardData.fromJson(body['data']);
+                }
+            }
+            throw Exception('Gagal memuat data dashboard.');
+        } catch (e) {
+            rethrow;
+        }
+    }
+
+    // Profile
+    static Future<Map<String, dynamic>> updateProfile(
+      {File? avatar, Map<String, String>? data}) async {
+    final String? token = await TokenManager.getToken();
+    if (token == null) return {'success': false, 'message': 'Autentikasi diperlukan.'};
+    
+    final Uri uri = Uri.parse('$_baseUrl/profile/update');
+    try {
+      var request = http.MultipartRequest('POST', uri);
+      request.headers['Authorization'] = 'Bearer $token';
+      request.headers['Accept'] = 'application/json';
+
+      if (data != null) {
+        request.fields.addAll(data);
+      }
+      if (avatar != null) {
+        request.files.add(await http.MultipartFile.fromPath('avatar', avatar.path, filename: path.basename(avatar.path)));
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      return jsonDecode(response.body);
+    } catch (e) {
+      return {'success': false, 'message': 'Error: ${e.toString()}'};
+    }
+  }
+
+  // admin
+  static Future<List<User>> getUsers() async {
+    final token = await TokenManager.getToken();
+    if (token == null) throw Exception('Autentikasi diperlukan.');
+    final response = await http.get(Uri.parse('$_baseUrl/users'),
+        headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      if (body['success'] == true && body['data'] is List) {
+        return (body['data'] as List).map((item) => User.fromJson(item)).toList();
+      }
+    }
+    throw Exception('Gagal memuat daftar pengguna.');
+  }
+
+  static Future<Map<String, dynamic>> createUser(Map<String, String> userData) async {
+    final token = await TokenManager.getToken();
+    if (token == null) return {'success': false, 'message': 'Autentikasi diperlukan.'};
+    
+    final response = await http.post(Uri.parse('$_baseUrl/user-management'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(userData));
+    return jsonDecode(response.body);
+  }
+
+  static Future<Map<String, dynamic>> updateUser(int userId, Map<String, String> userData) async {
+    final token = await TokenManager.getToken();
+    if (token == null) return {'success': false, 'message': 'Autentikasi diperlukan.'};
+    final response = await http.put(Uri.parse('$_baseUrl/user-management/$userId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(userData));
+    return jsonDecode(response.body);
+  }
+
+  static Future<Map<String, dynamic>> deleteUser(int userId) async {
+    final token = await TokenManager.getToken();
+    if (token == null) return {'success': false, 'message': 'Autentikasi diperlukan.'};
+    final response = await http.delete(Uri.parse('$_baseUrl/user-management/$userId'),
+        headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
+    return jsonDecode(response.body);
+  }
 
 
 }

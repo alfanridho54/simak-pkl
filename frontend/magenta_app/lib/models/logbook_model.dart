@@ -1,4 +1,4 @@
-import 'absen_model.dart';
+import 'absen_model.dart'; 
 
 class Logbook {
   final int id;
@@ -7,6 +7,7 @@ class Logbook {
   final String filePdf;
   final int dataPklId;
   final DataPklInfo? dataPkl;
+  final String? createdAt; 
 
   Logbook({
     required this.id,
@@ -15,6 +16,7 @@ class Logbook {
     required this.filePdf,
     required this.dataPklId,
     this.dataPkl,
+    this.createdAt, 
   });
 
   factory Logbook.fromJson(Map<String, dynamic> json) {
@@ -27,6 +29,7 @@ class Logbook {
       dataPkl: json['data_pkl'] != null
           ? DataPklInfo.fromJson(json['data_pkl'] as Map<String, dynamic>)
           : null,
+      createdAt: json['created_at'] as String?, 
     );
   }
 

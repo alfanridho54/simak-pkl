@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\LaporanPklController;
 use App\Http\Controllers\Api\LogbookController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\ProfileController;
 
 
 // Rute Publik
@@ -56,4 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('user-management', UserController::class)->except(['index'])->parameters(['user-management' => 'user']);
         Route::apiResource('notification', NotificationController::class);
     });
+
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::post('/profile/update', [ProfileController::class, 'update']);
 });

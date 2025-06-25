@@ -28,7 +28,7 @@
         </tr>
         <tr>
             <th>NIM / NPM</th>
-            <td><!-- Tambahkan NIM/NPM jika ada di model User --></td>
+            <td>{{ $logbook->dataPkl->mahasiswa->nim ?? 'N/A' }}</td>
         </tr>
         <tr>
             <th>Perusahaan PKL</th>

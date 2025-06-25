@@ -4,9 +4,10 @@ import '../services/auth_services.dart';
 import '../providers/user_data_provider.dart';
 import '../models/user_model.dart';
 import '../screens/home_screen.dart';
-import '../screens/data_pkl/data_pkl.dart';
 import '../screens/absen/absen_screen.dart';
 import '../screens/logbook/logbook_screen.dart';
+import '../screens/laporan_pkl/laporan_pkl_screen.dart';
+import '../routes/app_routes.dart';
 
 
 class CustomDrawer extends StatelessWidget {
@@ -47,37 +48,26 @@ class CustomDrawer extends StatelessWidget {
                   }
                 },
               ),
-              if (userRole == 'dosen' || userRole == 'mahasiswa')
+              if (userRole == 'mahasiswa' || userRole == 'dosen' || userRole == 'admin')
                 ListTile(
-                  leading: const Icon(Icons.article),
+                  leading: const Icon(Icons.business_center_outlined),
                   title: const Text('Data PKL'),
                   onTap: () {
                     Navigator.pop(context);
                     if (userRole != null) {
+                      // Cek agar tidak push halaman yang sama
                       final currentRoute = ModalRoute.of(context);
-                      bool alreadyOnPage = false;
-                      if (currentRoute?.settings.name == DataPKLScreen.routeName) {
-                        final args = currentRoute?.settings.arguments as Map<String, String>?;
-                        if (args?['role'] == userRole) {
-                          alreadyOnPage = true;
-                        }
-                      }
-                      if (!alreadyOnPage) {
-                        Navigator.pushNamed(
-                          context,
-                          DataPKLScreen.routeName,
-                          arguments: {'role': userRole},
-                        );
+                      if (currentRoute?.settings.name != AppRoutes.dataPklList) {
+                         Navigator.pushNamed(
+                           context,
+                           AppRoutes.dataPklList,
+                           arguments: {'role': userRole}, // Kirim role saat navigasi
+                         );
                       }
                     }
                   },
-                )
-              else if (userRole != null)
-                 ListTile(
-                  leading: const Icon(Icons.article_outlined),
-                  title: const Text('Data PKL (Tidak tersedia)', style: TextStyle(color: Colors.grey)),
-                  onTap: null,
                 ),
+              
               ListTile(
                 leading: const Icon(Icons.calendar_today_outlined), 
                 title: const Text('Data Absensi'),
@@ -99,6 +89,31 @@ class CustomDrawer extends StatelessWidget {
                   }
                 },
               ),
+              ListTile(
+                leading: const Icon(Icons.assignment_outlined),
+                title: const Text('Laporan PKL'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, LaporanPklScreen.routeName);
+                },
+              ),
+              ListTile(
+            leading: const Icon(Icons.person_outline),
+            title: const Text('Profil Saya'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, AppRoutes.profile);
+            },
+          ),
+          if (userRole == 'admin')
+                ListTile(
+                  leading: const Icon(Icons.manage_accounts),
+                  title: const Text('Manajemen Pengguna'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, AppRoutes.userList);
+                  },
+                ),
               
               const Divider(),
               ListTile(

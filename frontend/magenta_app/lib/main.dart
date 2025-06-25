@@ -16,6 +16,13 @@ import 'screens/logbook/logbook_screen.dart';
 import 'screens/logbook/logbook_form_screen.dart';
 import 'models/logbook_model.dart';
 import 'screens/logbook/logbook_detail_screen.dart';
+import 'screens/laporan_pkl/laporan_pkl_screen.dart';
+import 'screens/laporan_pkl/laporan_pkl_detail_screen.dart';
+import 'screens/laporan_pkl/laporan_pkl_form_screen.dart';
+import 'models/laporan_pkl_model.dart';
+import 'screens/profile_screen.dart';
+import 'screens/admin/user_list_screen.dart';
+
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -102,6 +109,26 @@ class MyApp extends StatelessWidget {
             } else {
               builder = (BuildContext _) => const Scaffold(body: Center(child: Text('Error: Data logbook tidak ditemukan.')));
             }
+            break;
+          case AppRoutes.laporanPklList:
+            builder = (BuildContext _) => const LaporanPklScreen();
+            break;
+          case AppRoutes.laporanPklForm:
+            builder = (BuildContext _) => const LaporanPklFormScreen();
+            break;
+          case AppRoutes.laporanPklDetail:
+            final laporanArg = settings.arguments as LaporanPkl?;
+            if (laporanArg != null) {
+              builder = (BuildContext _) => LaporanPklDetailScreen(laporan: laporanArg);
+            } else {
+              builder = (BuildContext _) => const Scaffold(body: Center(child: Text('Error: Data Laporan tidak ditemukan.')));
+            }
+            break;
+          case AppRoutes.profile:
+            builder = (BuildContext _) => const ProfileScreen();
+            break;
+          case AppRoutes.userList:
+            builder = (BuildContext _) => const UserListScreen();
             break;
           default:
             builder = (BuildContext _) => const Scaffold(body: Center(child: Text('Halaman tidak ditemukan')));

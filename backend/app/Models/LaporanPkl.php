@@ -1,10 +1,11 @@
 <?php
 
-// app/Models/LaporanPkl.php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute; // <-- IMPORT
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage; // <-- IMPORT
 
 class LaporanPkl extends Model
 {
@@ -13,6 +14,15 @@ class LaporanPkl extends Model
     protected $fillable = [
         'report_date', 'file_attachment', 'status', 'data_pkl_id','users_id'
     ];
+
+    protected function fileAttachment(): Attribute
+    {
+        return Attribute::make(
+           
+            get: fn ($value) => $value ? Storage::disk('public')->url($value) : null,
+        );
+    }
+    // --- AKHIR PENAMBAHAN ---
 
     public function mahasiswa()
     {
@@ -25,8 +35,7 @@ class LaporanPkl extends Model
     }
 
     public function dataPkl()
-{
-    return $this->belongsTo(DataPkl::class, 'data_pkl_id');
+    {
+        return $this->belongsTo(DataPkl::class, 'data_pkl_id');
+    }
 }
-}
-

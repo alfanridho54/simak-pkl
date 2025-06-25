@@ -9,4 +9,9 @@ class AppRoutes {
   static const String logbookForm = '/logbook';
   static const String logbookList = '/logbook-list';
   static const String logbookDetail = '/logbook-detail';
+  static const String laporanPklList = '/laporan-pkl';
+  static const String laporanPklDetail = '/laporan-pkl-detail';
+  static const String laporanPklForm = '/laporan-pkl-form';
+  static const String profile = '/profile';
+  static const String userList = '/admin/users';
 }

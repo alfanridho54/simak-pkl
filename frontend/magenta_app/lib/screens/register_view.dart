@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/auth_services.dart'; // Pastikan path ini benar
+import '../services/auth_services.dart';
 
 class RegisterView extends StatefulWidget {
   final TabController? tabController;
@@ -12,6 +12,7 @@ class RegisterView extends StatefulWidget {
 class _RegisterViewState extends State<RegisterView> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _nimController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -37,13 +38,14 @@ class _RegisterViewState extends State<RegisterView> {
       setState(() => _isLoading = true);
       final result = await _authService.register(
         _nameController.text.trim(),
+        _nimController.text.trim(),
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
       setState(() => _isLoading = false);
 
       if (mounted) {
-        final bool isSuccess = result['success'] as bool? ?? false; // Perbaikan di sini
+        final bool isSuccess = result['success'] as bool? ?? false; 
         final String message = result['message'] as String? ?? (isSuccess ? 'Registrasi berhasil! Silakan login.' : 'Registrasi gagal.');
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -55,6 +57,7 @@ class _RegisterViewState extends State<RegisterView> {
 
         if (isSuccess) {
           _nameController.clear();
+          _nimController.clear();
           _emailController.clear();
           _passwordController.clear();
           _confirmPasswordController.clear();
@@ -67,6 +70,7 @@ class _RegisterViewState extends State<RegisterView> {
    @override
   void dispose() {
     _nameController.dispose();
+    _nimController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -96,10 +100,25 @@ class _RegisterViewState extends State<RegisterView> {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _nimController,
+              decoration: const InputDecoration(labelText: 'NIM'),
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'NIM tidak boleh kosong';
+                }
+                if (value.length != 10) {
+                  return 'NIM harus 10 digit';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Masukkan Email / Username'),
               keyboardType: TextInputType.emailAddress,
-               validator: (value) {
+              validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Email tidak boleh kosong';
                 }
@@ -114,7 +133,7 @@ class _RegisterViewState extends State<RegisterView> {
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: 'Masukkan Password',
-                 suffixIcon: IconButton(
+                suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword ? Icons.visibility_off : Icons.visibility,
                   ),
@@ -156,7 +175,7 @@ class _RegisterViewState extends State<RegisterView> {
               },
             ),
             const SizedBox(height: 30),
-             _isLoading
+            _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
                     onPressed: _register,
@@ -169,7 +188,7 @@ class _RegisterViewState extends State<RegisterView> {
                 const Text('Sudah Punya Akun?'),
                 TextButton(
                   onPressed: () {
-                     widget.tabController?.animateTo(0);
+                    widget.tabController?.animateTo(0);
                   },
                   child: const Text('Masuk'),
                 ),
@@ -181,3 +200,4 @@ class _RegisterViewState extends State<RegisterView> {
     );
   }
 }
+

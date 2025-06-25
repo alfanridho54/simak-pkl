@@ -1,34 +1,40 @@
 class User {
   final int id;
   final String name;
+  final String? nim;
   final String email;
-  final String? role; // Role bisa jadi bagian dari model User dari API /user
-  // Tambahkan field lain jika API /user mengembalikannya, misal avatar_url
+  final String? role;
+  final String? avatar;
 
   User({
     required this.id,
     required this.name,
+    this.nim,
     required this.email,
     this.role,
+    this.avatar,
   });
 
 factory User.fromJson(Map<String, dynamic> json) {
   return User(
-    // Gunakan ?? untuk memberikan nilai default jika null, atau validasi lebih lanjut
-    id: json['id'] as int? ?? 0, // Atau throw error jika id wajib ada
+   
+    id: json['id'] as int? ?? 0,
     name: json['name'] as String? ?? 'Nama Tidak Ada',
+    nim: json['nim'] as String?,
     email: json['email'] as String? ?? 'Email Tidak Ada',
     role: json['role'] as String?,
+    avatar: json['avatar'] as String?,
   );
 }
 
-  // Untuk menyimpan ke shared_preferences jika perlu
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,
+      'nim': nim,
       'email': email,
       'role': role,
+      'avatar': avatar
     };
   }
 }
